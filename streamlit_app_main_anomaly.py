@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 from sklearn.ensemble import IsolationForest
 from scipy import stats
 from datetime import datetime
-# import pyodbc
 
 # Page configuration
 st.set_page_config(page_title="Sales Anomaly Detection", layout="wide", initial_sidebar_state="expanded")
@@ -403,3 +402,4 @@ if st.button("📥 Download Anomaly Report"):
         mime="text/csv"
 
     )
+
