@@ -211,7 +211,9 @@ if 'Actions' in df.columns and 'All' not in selected_actions:
 # Aggregate daily sales
 agg_dict = {'AdjTanxa': 'sum'}
 if 'UN' in filtered_df.columns:
-    agg_dict['UN'] = 'sum'
+    agg_dict['UN'] = 'nunique'  # Count unique locations
+if 'IdProd' in filtered_df.columns:
+    agg_dict['IdProd'] = 'count'  # Count products as units
 if 'Zedd' in filtered_df.columns:
     agg_dict['Zedd'] = 'count'
 
@@ -220,7 +222,9 @@ daily_sales = filtered_df.groupby('DataReal').agg(agg_dict).reset_index()
 # Rename columns
 col_names = ['Date', 'TotalSales']
 if 'UN' in filtered_df.columns:
-    col_names.append('TotalUnits')
+    col_names.append('UniqueLocations')
+if 'IdProd' in filtered_df.columns:
+    col_names.append('ProductCount')
 if 'Zedd' in filtered_df.columns:
     col_names.append('InvoiceCount')
 daily_sales.columns = col_names
@@ -235,14 +239,17 @@ cols = st.columns(4)
 with cols[0]:
     st.metric("Total Sales", f"${daily_sales['TotalSales'].sum():,.2f}")
 with cols[1]:
-    if 'TotalUnits' in daily_sales.columns:
-        st.metric("Total Units", f"{daily_sales['TotalUnits'].sum():,.0f}")
+    if 'ProductCount' in daily_sales.columns:
+        st.metric("Total Products Sold", f"{daily_sales['ProductCount'].sum():,.0f}")
     else:
         st.metric("Data Points", f"{len(filtered_df):,}")
 with cols[2]:
     st.metric("Avg Daily Sales", f"${daily_sales['TotalSales'].mean():,.2f}")
 with cols[3]:
-    st.metric("Date Range", f"{len(daily_sales)} days")
+    if 'UniqueLocations' in daily_sales.columns:
+        st.metric("Avg Locations/Day", f"{daily_sales['UniqueLocations'].mean():,.1f}")
+    else:
+        st.metric("Date Range", f"{len(daily_sales)} days")
 
 st.markdown("---")
 
@@ -400,6 +407,4 @@ if st.button("📥 Download Anomaly Report"):
         data=csv,
         file_name=f"anomaly_report_{datetime.now().strftime('%Y%m%d')}.csv",
         mime="text/csv"
-
     )
-
