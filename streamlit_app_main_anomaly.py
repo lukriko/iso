@@ -26,7 +26,7 @@ def check_password():
         st.text_input(
             "Password", type="password", on_change=password_entered, key="password"
         )
-        st.info("ℹ️ Default password is: admin123 (change in .streamlit/secrets.toml)")
+        st.info("aaaaa")
         return False
     elif not st.session_state["password_correct"]:
         # Password not correct, show input + error
@@ -422,3 +422,4 @@ if st.button("📥 Download Anomaly Report"):
         file_name=f"anomaly_report_{datetime.now().strftime('%Y%m%d')}.csv",
         mime="text/csv"
     )
+
