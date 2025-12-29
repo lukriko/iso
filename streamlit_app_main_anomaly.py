@@ -153,6 +153,17 @@ if 'ProdG' in df.columns:
 else:
     selected_prodg = ['All']
 
+# Location filter (if exists)
+if 'UN' in df.columns:
+    un_options = ['All'] + sorted(df['UN'].unique().tolist())
+    selected_un = st.sidebar.multiselect(
+        "Location (UN)",
+        options=un_options,
+        default=['All']
+    )
+else:
+    selected_un = ['All']
+
 # Product ID filter (if exists)
 if 'IdProd' in df.columns:
     idprod_options = ['All'] + sorted(df['IdProd'].unique().tolist())
@@ -202,6 +213,9 @@ if len(date_range) == 2:
 if 'ProdG' in df.columns and 'All' not in selected_prodg:
     filtered_df = filtered_df[filtered_df['ProdG'].isin(selected_prodg)]
 
+if 'UN' in df.columns and 'All' not in selected_un:
+    filtered_df = filtered_df[filtered_df['UN'].isin(selected_un)]
+
 if 'IdProd' in df.columns and 'All' not in selected_idprod:
     filtered_df = filtered_df[filtered_df['IdProd'].isin(selected_idprod)]
 
@@ -246,8 +260,8 @@ with cols[1]:
 with cols[2]:
     st.metric("Avg Daily Sales", f"${daily_sales['TotalSales'].mean():,.2f}")
 with cols[3]:
-    if 'UniqueLocations' in daily_sales.columns:
-        st.metric("Avg Locations/Day", f"{daily_sales['UniqueLocations'].mean():,.1f}")
+    if 'ProductCount' in daily_sales.columns:
+        st.metric("Avg Products/Day", f"{daily_sales['ProductCount'].mean():,.1f}")
     else:
         st.metric("Date Range", f"{len(daily_sales)} days")
 
